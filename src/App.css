@@ -1,0 +1,9 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  list-style: none;
+  line-height: 22.4px;
+  color: #1E1E1E;
+  font-family: "Inter", sans-serif;
+}
