@@ -1,15 +1,17 @@
 import logo from "@assets/logo/Docland.png";
 import FormInput from "@components/FormInput";
-
 import ZimbraIcon from "@assets/icon/Zimbra.png";
 import InputPassword from "@components/InputPassword";
 import Button from "@src/components/Button";
 import CustomCheckbox from "@src/components/Checkbox";
 import Container from "@src/components/Container/Container";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import PATH from "@routes/path";
+import fetcherApi from "@src/apis/axiosClient";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "@src/constants";
+import { setLocalStorage } from "@src/helpers";
 
 const Login: React.FC = (): JSX.Element => {
   const navigate = useNavigate();
@@ -21,26 +23,31 @@ const Login: React.FC = (): JSX.Element => {
     },
   });
 
-  //function
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: { email: string; password: string }) => {
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const response = await fetcherApi.post("http://127.0.0.1:5000/login", data);
+      if (response.data && response.data.accessToken && response.data.refreshToken) {
+        setLocalStorage(ACCESS_TOKEN, response.data.accessToken);
+        setLocalStorage(REFRESH_TOKEN, response.data.refreshToken);
+        // Thay đổi cách navigate
+        navigate(PATH.HOME, { replace: true });
+      } else {
+        throw new Error("Invalid response from server");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Đăng nhập thất bại. Vui lòng kiểm tra lại email và mật khẩu.");
+    } finally {
       setIsLoading(false);
-      // Mock successful login
-      localStorage.setItem("isLoggedIn", "true");
-      navigate("/home");
-    }, 1500);
+    }
   };
 
-  const getUserID = (tokenString: string) => {};
-
   return (
-    // <div className="flex justify-center items-center w-full h-full mb-6">
     <Container style={{ paddingTop: "24px" }}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col items-center">
-          <img src={logo} className="w-[162px] h-auto object-cover mb-8"></img>
+          <img src={logo} className="w-[162px] h-auto object-cover mb-8" alt="Logo" />
           <div className="border border-solid border-[#D9D9D9] rounded-[24px] flex flex-col items-center justify-start p-[24px] gap-[24px] shadow-md">
             <span className="firstTitle text-[#000000] text-2xl font-semibold">
               Đăng nhập
@@ -48,14 +55,14 @@ const Login: React.FC = (): JSX.Element => {
 
             <FormInput
               label="Email"
-              {...register("email")}
+              {...register("email", { required: true })}
               placeholder={"Nhập email của bạn"}
               style={{ width: "400px" }}
             />
 
             <InputPassword
               label="Mật khẩu"
-              {...register("password")}
+              {...register("password", { required: true })}
               placeholder={"Nhập mật khẩu"}
               style={{ width: "400px" }}
             />
@@ -67,15 +74,15 @@ const Login: React.FC = (): JSX.Element => {
                   <CustomCheckbox
                     labelStyle="text-black text-xs font-normal"
                     label=" Ghi nhớ cho lần đăng nhập tiếp theo"
-                  ></CustomCheckbox>
+                  />
                 </div>
               </div>
-              <a
-                href="#"
-                className="text-blue-600 hover:none font-semibold text-[14px] ml-auto"
+              <Link
+                to={`${PATH.AUTH}/${PATH.FORGET_PASSWORD}`}
+                className="text-blue-600 hover:underline font-semibold text-[14px] ml-auto"
               >
                 Quên mật khẩu?
-              </a>
+              </Link>
             </div>
 
             <div className="w-full ">
@@ -83,7 +90,6 @@ const Login: React.FC = (): JSX.Element => {
                 variant="primary"
                 className="w-full h-12"
                 textStyle="text-white text-[18px] font-[500]"
-                disabled={isLoading}
               >
                 {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
               </Button>
@@ -98,6 +104,7 @@ const Login: React.FC = (): JSX.Element => {
                   />
                 }
                 textStyle="text-primary text-[18px] font-[600]"
+                
               >
                 Đăng nhập bằng Zimbra
               </Button>

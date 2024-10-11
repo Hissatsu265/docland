@@ -15,7 +15,15 @@ const ForgetPassword: React.FC = (): JSX.Element => {
     },
   });
 
-  const onSubmit = (data: any) => {};
+  const onSubmit = (data: any) => {
+    const email = data.email; // Get the email from the form data
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email && emailPattern.test(email)) {
+      navigate("/auth/verify-email");
+    } else {
+      alert("Vui lòng nhập email hợp lệ.");
+    }
+  };
 
   return (
     <Container
@@ -47,6 +55,7 @@ const ForgetPassword: React.FC = (): JSX.Element => {
                 variant="primary"
                 className="w-full h-12"
                 textStyle="text-white text-[18px] font-[500]"
+                type="submit" 
               >
                 Lấy mã
               </Button>
@@ -54,6 +63,7 @@ const ForgetPassword: React.FC = (): JSX.Element => {
                 variant="secondary"
                 className="w-full h-12 mt-4 border-0"
                 textStyle="text-[18px] font-[600]"
+                onClick={() => navigate("/auth")}
               >
                 Huỷ bỏ
               </Button>

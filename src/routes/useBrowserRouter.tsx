@@ -62,11 +62,9 @@ const useBrowserRouter = () => {
     {
       path: PATH.HOME,
       element: (
-        <ProtectedRoute>
-          <Suspense fallback={<Loading />}>
-            <HomePage />
-          </Suspense>
-        </ProtectedRoute>
+        <Suspense fallback={<Loading />}>
+          <HomePage />
+        </Suspense>
       ),
     },
   ]);
