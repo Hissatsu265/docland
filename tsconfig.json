@@ -1,0 +1,40 @@
+{
+  // "files": [],
+  // "references": [
+  //   { "path": "./tsconfig.app.json" },
+  //   { "path": "./tsconfig.node.json" }
+  // ],
+  "include": ["src"],
+  "compilerOptions": {
+    "module": "esnext",   
+    "target": "esnext",   
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "jsx": "react-jsx" ,
+    "paths": {
+      "@src/*": [
+        "./src/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@constants":[
+        "src/constants"
+      ],
+      "@routes/*":[
+        "src/routes/*"
+      ],
+      "@hooks/*":[
+        "src/hooks/*"
+      ],
+      "@pages/*":[
+        "src/pages/*"
+      ],
+      "@assets/*":[
+        "src/assets/*"
+      ],
+    }
+  }
+  
+}
